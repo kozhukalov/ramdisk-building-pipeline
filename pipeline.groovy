@@ -29,6 +29,8 @@ gerritCredentialsID = env.GIT_CREDENTIALS_ID ?: "jenkins"
 
 label = "virtual"
 imageName = "ipa${ipaRelease}-${distribution}-${release}-${dateTime}"
+// space separated list of additional elements
+elements = "pip-and-virtualenv proliant-tools"
 
 timeout(time: 6, unit: "HOURS") {
     node(label) {
@@ -60,8 +62,13 @@ timeout(time: 6, unit: "HOURS") {
                 -e RELEASE=${release} \
                 -e REPOREF=${reporef} \
                 -e IMAGE_NAME=${imageName} \
+                -e ELEMENTS="${elements}" \
+                -e DIB_INSTALLTYPE_pip_and_virtualenv=source \
                 ipa-builder"""
-                //TODO add sha256sum of the image
+                sh """echo > ${artifactsDir}/SHA256SUMS && \
+                echo \$(sha256sum ${artifactsDir}/${imageName}.initramfs | cut -d' ' -f1) ${imageName}.initramfs >> ${artifactsDir}/SHA256SUMS && \
+                echo \$(sha256sum ${artifactsDir}/${imageName}.kernel | cut -d' ' -f1) ${imageName}.kernel >> ${artifactsDir}/SHA256SUMS
+                """
             }
         } catch (Throwable e) {
             currentBuild.result = "FAILURE"
@@ -69,7 +76,7 @@ timeout(time: 6, unit: "HOURS") {
             throw e
         } finally {
             stage("Archive artifacts") {
-                archiveArtifacts artifacts: "${artifactsRelDir}/*.initramfs, ${artifactsRelDir}/*.kernel, ${artifactsRelDir}/${imageName}.d/**/*"
+                archiveArtifacts artifacts: "${artifactsRelDir}/*.initramfs, ${artifactsRelDir}/*.kernel, ${artifactsRelDir}/${imageName}.d/**/*, ${artifactsRelDir}/SHA256SUMS"
             }
         }
     }
