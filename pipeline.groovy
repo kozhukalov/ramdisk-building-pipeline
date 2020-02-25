@@ -32,6 +32,15 @@ imageName = "ipa${ipaRelease}-${distribution}-${release}-${dateTime}"
 // space separated list of additional elements
 elements = "pip-and-virtualenv proliant-tools"
 
+setDibDevUser = true
+if (setDibDevUser) {
+    dibDevUserArgs = "-e DIB_DEV_USER_USERNAME=admin -e DIB_DEV_USER_PASSWORD=admin -e DIB_DEV_USER_PWDLESS_SUDO=yes"
+    elements = "${elements} devuser"
+} else {
+    dibDevUserArgs = ""
+}
+
+
 timeout(time: 6, unit: "HOURS") {
     node(label) {
         def workspace = sh(script: "pwd", returnStdout: true).trim()
@@ -64,6 +73,7 @@ timeout(time: 6, unit: "HOURS") {
                 -e IMAGE_NAME=${imageName} \
                 -e ELEMENTS="${elements}" \
                 -e DIB_INSTALLTYPE_pip_and_virtualenv=source \
+                ${dibDevUserArgs} \
                 ipa-builder"""
                 sh """echo > ${artifactsDir}/SHA256SUMS && \
                 echo \$(sha256sum ${artifactsDir}/${imageName}.initramfs | cut -d' ' -f1) ${imageName}.initramfs >> ${artifactsDir}/SHA256SUMS && \
