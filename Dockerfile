@@ -13,4 +13,7 @@ WORKDIR /artifacts
 
 COPY entrypoint.sh /entrypoint.sh
 
+# This is to make proliant-tools element compatible with ironic-python-agent-ramdisk
+RUN sed -i 's;IPA_VENV=/usr/share/ironic-python-agent/venv;IPA_VENV=/opt/ironic-python-agent;' /usr/local/lib/python3.6/site-packages/diskimage_builder/elements/proliant-tools/install.d/65-proliant-tools-install
+
 ENTRYPOINT [ "/entrypoint.sh" ]
