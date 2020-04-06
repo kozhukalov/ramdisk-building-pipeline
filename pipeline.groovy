@@ -16,7 +16,7 @@ jenkinsHomeDir = "/home/jenkins"
 
 distribution = env.DIB_DISTRIBUTION ?: "ubuntu"
 release = env.DIB_RELEASE ?: "bionic"
-reporef = env.DIB_REPOREF_ironic_python_agent ?: "origin/stable/queens"
+reporef = env.DIB_REPOREF_ironic_python_agent ?: "stable/queens"
 
 ipaBuilderVersion = "1.1.0"
 // reporef must be slash separated line
@@ -34,7 +34,7 @@ elements = "pip-and-virtualenv proliant-tools"
 
 setDibDevUser = true
 if (setDibDevUser) {
-    dibDevUserArgs = "-e DIB_DEV_USER_USERNAME=admin -e DIB_DEV_USER_PASSWORD=admin -e DIB_DEV_USER_PWDLESS_SUDO=yes"
+    dibDevUserArgs = "-e DIB_DEV_USER_USERNAME=devuser -e DIB_DEV_USER_PASSWORD=devuser -e DIB_DEV_USER_PWDLESS_SUDO=yes"
     elements = "${elements} devuser"
 } else {
     dibDevUserArgs = ""
