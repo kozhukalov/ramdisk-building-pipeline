@@ -14,6 +14,9 @@ ELEMENTS_ARGS=''
 for e in ${ELEMENTS}; do
     ELEMENTS_ARGS="${ELEMENTS_ARGS} -e ${e}"
 done
+
+ELEMENTS_ARGS="${ELEMENTS_ARGS} -e ironic-python-agent-ramdisk-fix"
+
 # Build ramdisk
 ironic-python-agent-builder -r ${RELEASE} -b ${REPOREF} -o ${IMAGE_NAME} ${ELEMENTS_ARGS} ${DISTRIBUTION}
 
