@@ -1,0 +1,27 @@
+--- objects.py	2020-04-08 19:34:53.880000000 +0300
++++ objects.py	2020-04-08 19:21:54.580000000 +0300
+@@ -110,6 +110,16 @@
+     return info, i
+ 
+ 
++def _concat_wrapped(stdout):
++    lines = []
++    for l in stdout.split("\n"):
++        if re.match(r'[^\(]*\).*', l):
++            lines.append(lines.pop() + l)
++        else:
++            lines.append(l)
++    return "\n".join(lines)
++
++
+ def _convert_to_dict(stdout):
+     """Wrapper function for parsing hpssacli/ssacli command.
+ 
+@@ -118,6 +128,7 @@
+     the complete dictionary containing the RAID information.
+     """
+ 
++    stdout = _concat_wrapped(stdout)
+     lines = stdout.split("\n")
+     lines = list(filter(None, lines))
+     info_dict, j = _get_dict(lines, 0, 0, 0)
